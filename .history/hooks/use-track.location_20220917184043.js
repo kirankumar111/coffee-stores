@@ -1,0 +1,1 @@
+const useTrackLocation = () => { return }
