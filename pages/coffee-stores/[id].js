@@ -1,20 +1,27 @@
+import { useRouter } from 'next/router';
+import { useContext, useState, useEffect } from 'react';
 import Link from 'next/link';
 import Head from 'next/head';
 import Image from 'next/image';
-import { useRouter } from 'next/router';
 import cls from 'classnames';
 // import coffeeStoresData from '../../data/coffee-stores.json';
 import styles from '../../styles/coffee-store.module.css';
 import { fetchCoffeeStores } from '../../lib/coffee-stores';
+import { StoreContext } from '../../store/store-context';
+import { isEmpty } from '../../utils';
 
-export async function getStaticProps(props) {
-    const params = props.params;
+export async function getStaticProps(staticProps) {
+    const params = staticProps.params;
+    console.log('params', params);
     const coffeeStoresData = await fetchCoffeeStores();
+    console.log('coffeeStoresData', coffeeStoresData);
+    const findCoffeeStoreById = coffeeStoresData.find((coffeeStore) => {
+        return coffeeStore.id.toString() === params.id;
+    });
+    console.log('findCoffeeStoreById', findCoffeeStoreById);
     return {
         props: {
-            coffeeStore: coffeeStoresData.find(coffeeStore => {
-                return coffeeStore.id.toString() === params.id
-            })
+            coffeeStore: findCoffeeStoreById ? findCoffeeStoreById : {}
         }
     }
 }
@@ -28,20 +35,106 @@ export async function getStaticPaths() {
     });
     return {
         paths,
-        fallback: false,
+        fallback: true,
     }
 }
 
-const CoffeeStore = (props) => {
+const CoffeeStore = (initialProps) => {
+    console.log('initialProps.coffeeStore', initialProps.coffeeStore);
     const router = useRouter();
+    const id = router.query.id;
+    console.log('id', id);
+    const [coffeeStore, setCoffeeStore] = useState(initialProps.coffeeStore);
+    const { state: { coffeeStores } } = useContext(StoreContext);
     if (router.isFallback) {
         return <div>Loading...</div>
     }
-    const { address, neighborhood, name, imgUrl } = props.coffeeStore;
+    // const handleCreateCoffeeStore = async (coffeeStore) => {
+    //     try {
+    //         const { id, name, voting, imgUrl, neighbourhood, address } = coffeeStore;
+    //         const response = await fetch("/api/createCoffeeStore", {
+    //             method: "POST",
+    //             headers: {
+    //                 "Content-Type": "application/json",
+    //             },
+    //             body: JSON.stringify({
+    //                 id,
+    //                 name,
+    //                 voting: 0,
+    //                 imgUrl,
+    //                 neighbourhood: neighbourhood || "",
+    //                 address: address || "",
+    //             }),
+    //         });
 
-    const handleUpvoteButton = () => {
+    //         const dbCoffeeStore = await response.json();
+    //     } catch (err) {
+    //         console.error("Error creating coffee store", err);
+    //     }
+    // };
+    useEffect(() => {
+        if (isEmpty(initialProps.coffeeStore)) {
+            if (coffeeStores.length > 0) {
+                const findCoffeeStoreById = coffeeStores.find((coffeeStore) => {
+                    return coffeeStore.id.toString() === id;
+                });
+                setCoffeeStore(findCoffeeStoreById);
+                // handleCreateCoffeeStore(findCoffeeStoreById);
+            }
+        } else {
+            // handleCreateCoffeeStore(initialProps.coffeeStore);
+        }
+    }, [initialProps.coffeeStore, coffeeStores, id]);
+
+    const { address, neighborhood, name, imgUrl } = coffeeStore;
+
+    // const {
+    //     name = "",
+    //     address = "",
+    //     neighbourhood = "",
+    //     imgUrl = "",
+    // } = coffeeStore;
+    // const [votingCount, setVotingCount] = useState(0);
+
+    // const { data, error } = useSWR(`/api/getCoffeeStoreById?id=${id}`, fetcher);
+
+    // useEffect(() => {
+    //     if (data && data.length > 0) {
+    //         setCoffeeStore(data[0]);
+    //         setVotingCount(data[0].voting);
+    //     }
+    // }, [data]);
+
+    // if (router.isFallback) {
+    //     return <div>Loading...</div>;
+    // }
+
+    const handleUpvoteButton = async () => {
         console.log("handle Upvote Button");
+        // try {
+        //     const response = await fetch("/api/favouriteCoffeeStoreById", {
+        //         method: "PUT",
+        //         headers: {
+        //             "Content-Type": "application/json",
+        //         },
+        //         body: JSON.stringify({
+        //             id,
+        //         }),
+        //     });
+
+        //     const dbCoffeeStore = await response.json();
+
+        //     if (dbCoffeeStore && dbCoffeeStore.length > 0) {
+        //         let count = votingCount + 1;
+        //         setVotingCount(count);
+        //     }
+        // } catch (err) {
+        //     console.error("Error upvoting the coffee store", err);
+        // }
     }
+    // if (error) {
+    //     return <div>Something went wrong retrieving coffee store page</div>;
+    // }
     return (
         <div className={ styles.layout }>
             <Head><title>{ name }</title></Head>

@@ -6,33 +6,43 @@ import Card from '../components/card';
 // import coffeeStoresData from '../data/coffee-stores.json';
 import { fetchCoffeeStores } from '../lib/coffee-stores';
 import useTrackLocation from '../hooks/use-track-location';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
+import { ACTION_TYPES, StoreContext } from "../store/store-context";
 
 
 export async function getStaticProps(context) {
-  //const data = coffeeStores;
-  const coffeeStoresData = await fetchCoffeeStores();
+  const coffeeStores = await fetchCoffeeStores();
   return {
     props: {
-      coffeeStores: coffeeStoresData,
+      coffeeStores,
     }
   }
 }
 
 export default function Home(props) {
-  const { handleTrackLocation, latLong, locationErrorMsg, isFindingLocation } = useTrackLocation();
-  console.log({ handleTrackLocation, latLong, locationErrorMsg, isFindingLocation });
+  const { handleTrackLocation, locationErrorMsg, isFindingLocation } = useTrackLocation();
 
-  const [coffeeStores, setCoffeeStores] = useState("");
+  // const [coffeeStores, setCoffeeStores] = useState("");
   const [coffeeStoresError, setCoffeeStoresError] = useState(null);
+  const { dispatch, state } = useContext(StoreContext);
+
+  const { coffeeStores, latLong } = state;
 
   useEffect(() => {
     async function setCoffeeStoresByLocation() {
       if (latLong) {
         try {
-          const fetchedCoffeeStores = await fetchCoffeeStores(latLong, 20);
-          console.log({ fetchedCoffeeStores });
-          setCoffeeStores(fetchedCoffeeStores)
+          let limit = 20;
+          const response = await fetch(`/api/coffeeStores?latLong=${latLong}&limit=${limit}`);//await fetchCoffeeStores(latLong, 20);
+          const coffeeStores = await response.json();
+          // setCoffeeStores(fetchedCoffeeStores);
+          dispatch({
+            type: ACTION_TYPES.SET_COFFEE_STORES,
+            payload: {
+              coffeeStores,
+            },
+          });
+          setCoffeeStoresError("");
         } catch (error) {
           console.log({ error });
           setCoffeeStoresError(error.meesage);
