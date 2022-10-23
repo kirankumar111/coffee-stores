@@ -99,6 +99,7 @@ const CoffeeStore = (initialProps) => {
 
     useEffect(() => {
         if (data && data.length > 0) {
+            console.log('datr from swr', data);
             setCoffeeStore(data[0]);
             setVotingCount(data[0].voting);
         }

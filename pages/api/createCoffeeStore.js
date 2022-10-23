@@ -1,25 +1,43 @@
-const Airtable = require('airtable');
-const base = new Airtable({ apiKey: process.env.AIRTABLE_API_KEY }).base(process.env.AIRTABLE_BASE_KEY);
-
-const table = base("coffee-stores");
+import { table, getMinifiedRecords, findRecordByFilter } from "../../lib/airtable";
 
 const createCoffeeStore = async (req, res) => {
-    if (req.method === "POST") {
-        //Finding a record
-        const findCoffeeStoreRecords = await table.select({ filterByFormula: `id="0"` }).firstPage();
-        if (findCoffeeStoreRecords != 0) {
-            const records = findCoffeeStoreRecords.map(record => {
-                return { ...record.fields }
-            });
-            res.json(records);
+    try {
+        if (req.method === "POST") {
+            const { id, name, address, neighbourhood, voting, imgUrl } = req.body;
+            if (!id && !name) {
+                res.status(400)
+                res.json({ message: "id & Name is missing" });
+            }
+            const records = await findRecordByFilter(id);
+            if (records.length !== 0) {
+                res.json(records);
+            } else {
+
+                const createRecords = await table.create([
+                    {
+                        fields: {
+                            id,
+                            name,
+                            address,
+                            neighbourhood,
+                            voting,
+                            imgUrl
+                        }
+                    }
+                ]);
+                const records = getMinifiedRecords(createRecords);
+                res.json({ message: "Create a record", records });
+
+            }
         } else {
-            res.json({ message: "Create a record" });
+            res.status(500);
+            res.json({ message: "Hello There!" });
         }
-        //create record
-    } else {
-        res.status(500);
-        res.json({ message: "Hello There!" });
+    } catch (e) {
+        console.error("Error Creating Or Finding store", e);
+        res.json({ message: "Error Creating Or Finding store", e });
     }
+
 }
 
 export default createCoffeeStore;

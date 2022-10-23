@@ -14,6 +14,7 @@ import useSWR from 'swr';
 export async function getStaticProps(staticProps) {
     const params = staticProps.params;
     const coffeeStoresData = await fetchCoffeeStores();
+    // console.log('coffeeStoresData', coffeeStoresData);
     const findCoffeeStoreById = coffeeStoresData.find((coffeeStore) => {
         return coffeeStore.id.toString() === params.id;
     });
@@ -99,6 +100,7 @@ const CoffeeStore = (initialProps) => {
 
     useEffect(() => {
         if (data && data.length > 0) {
+            console.log('datr from swr', data);
             setCoffeeStore(data[0]);
             setVotingCount(data[0].voting);
         }
