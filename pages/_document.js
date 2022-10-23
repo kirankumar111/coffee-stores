@@ -10,21 +10,18 @@ class MyDocument extends Document {
                         rel="preload"
                         as="font"
                         crossOrigin="anonymous">
-                        <a></a>
                     </link>
                     <link
                         href="/fonts/IBMPlexSens-Regular.ttf"
                         rel="preload"
                         as="font"
                         crossOrigin="anonymous">
-                        <a></a>
                     </link>
                     <link
                         href="/fonts/IBMPlexSens-SemiBold.ttf"
                         rel="preload"
                         as="font"
                         crossOrigin="anonymous">
-                        <a></a>
                     </link>
                 </Head>
                 <body>
