@@ -78,7 +78,7 @@ export default function Home(props) {
         { locationErrorMsg && <p>Something went wrong: { locationErrorMsg }</p> }
         { coffeeStoresError && <p>Something went wrong:{ coffeeStoresError }</p> }
         <div className={ styles.heroImage }>
-          <Image src="/static/hero-image.png" alt="HeroImage" width={ 700 } height={ 400 }></Image>
+          <Image src="/static/hero-image.webp" alt="HeroImage" width={ 700 } height={ 400 }></Image>
         </div>
         { coffeeStores.length > 0 && (
           <div className={ styles.sectionWrapper }>
