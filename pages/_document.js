@@ -1,36 +1,32 @@
 import Document, { NextScript, Html, Main, Head } from "next/document";
-import Link from "next/link";
 
 class MyDocument extends Document {
     render() {
         return (
             <Html lang="en">
                 <Head>
-                    <Link
+                    <link
                         href="/fonts/IBMPlexSens-Bold.ttf"
                         rel="preload"
                         as="font"
                         crossOrigin="anonymous">
-                        <a></a>
-                    </Link>
-                    <Link
+                    </link>
+                    <link
                         href="/fonts/IBMPlexSens-Regular.ttf"
                         rel="preload"
                         as="font"
                         crossOrigin="anonymous">
-                        <a></a>
-                    </Link>
-                    <Link
+                    </link>
+                    <link
                         href="/fonts/IBMPlexSens-SemiBold.ttf"
                         rel="preload"
                         as="font"
                         crossOrigin="anonymous">
-                        <a></a>
-                    </Link>
-                </Head>
+                    </link>
+                </Head >
                 <body>
                     <Main></Main>
-                    <NextScript/>
+                    <NextScript />
                 </body>
             </Html >
         );

@@ -1,12 +1,12 @@
-import '../styles/globals.css'
+import '../styles/globals.css';
+import StoreProvider from '../store/store-context';
 
 function MyApp({ Component, pageProps }) {
-  return <div>
-    <Component {...pageProps} />
-    <footer>
-      <p>@Coffee Trademark 2022</p>
-    </footer>
-  </div>
+  return (
+    <StoreProvider>
+      <Component { ...pageProps } />
+    </StoreProvider>
+  )
 }
 
 export default MyApp
