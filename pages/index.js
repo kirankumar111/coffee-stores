@@ -43,7 +43,7 @@ export default function Home(props) {
       if (latLong) {
         try {
           let limit = 20;
-          const response = await fetch(`/api/coffeeStores?latLong=${latLong}&limit=${limit}`);
+          const response = await fetch(`/api/getCoffeeStoreByLocation?latLong=${latLong}&limit=${limit}`);
           const coffeeStores = await response.json();
           // setCoffeeStores(fetchedCoffeeStores);
           dispatch({
@@ -88,7 +88,7 @@ export default function Home(props) {
                 return (
                   <Card
                     key={ store.fsq_id }
-                    href={ `/coffee-stores/${store.fsq_id}` }
+                    href={ `/coffee-store/${store.id}` }
                     name={ store.name }
                     imgUrl={ store.imgUrl || "https://images.unsplash.com/photo-1504753793650-d4a2b783c15e?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=2000&q=80" }
                     className={ styles.card }
@@ -109,7 +109,7 @@ export default function Home(props) {
                   return (
                     <Card
                       key={ store.fsq_id }
-                      href={ `/coffee-stores/${store.fsq_id}` }
+                      href={ `/coffee-store/${store.id}` }
                       name={ store.name }
                       imgUrl={ store.imgUrl || "https://images.unsplash.com/photo-1504753793650-d4a2b783c15e?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=2000&q=80" }
                       className={ styles.card }
