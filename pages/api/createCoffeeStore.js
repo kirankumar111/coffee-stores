@@ -26,15 +26,14 @@ const createCoffeeStore = async (req, res) => {
                     }
                 ]);
                 const records = getMinifiedRecords(createRecords);
-                res.json({ message: "Create a record", records });
-
+                res.json({ records });
             }
         } else {
             res.status(500);
-            res.json({ message: "Hello There!" });
+            res.json({ message: "Not defined method for this status code" });
         }
     } catch (e) {
-        console.error("Error Creating Or Finding store", e);
+        res.status(500);
         res.json({ message: "Error Creating Or Finding store", e });
     }
 

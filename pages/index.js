@@ -1,29 +1,39 @@
+import { useEffect, useState, useContext } from 'react';
+
 import Head from 'next/head';
 import Image from 'next/image';
-import styles from '../styles/Home.module.css';
 import Banner from '../components/banner';
 import Card from '../components/card';
-// import coffeeStoresData from '../data/coffee-stores.json';
+
+import styles from '../styles/Home.module.css';
+
 import { fetchCoffeeStores } from '../lib/coffee-stores';
 import useTrackLocation from '../hooks/use-track-location';
-import { useEffect, useState, useContext } from 'react';
 import { ACTION_TYPES, StoreContext } from "../store/store-context";
 
 
 export async function getStaticProps(context) {
+  if (!process.env.NEXT_PUBLIC_FOURSQUARE_API_KEY && !process.env.AIRTABLE_API_KEY && !process.env.AIRTABLE_BASE_KEY && !process.env.NEXT_PUBLIC_UNSPLASH_ACCESS_KEY) {
+    return {
+      redirect: {
+        destination: "/problem",
+        permanent: false
+      }
+    }
+  }
   const coffeeStores = await fetchCoffeeStores();
   return {
     props: {
       coffeeStores,
-    }
+    }//will be passed to the page component as props
   }
 }
 
 export default function Home(props) {
   const { handleTrackLocation, locationErrorMsg, isFindingLocation } = useTrackLocation();
 
-  // const [coffeeStores, setCoffeeStores] = useState("");
   const [coffeeStoresError, setCoffeeStoresError] = useState(null);
+
   const { dispatch, state } = useContext(StoreContext);
 
   const { coffeeStores, latLong } = state;
@@ -33,7 +43,7 @@ export default function Home(props) {
       if (latLong) {
         try {
           let limit = 20;
-          const response = await fetch(`/api/coffeeStores?latLong=${latLong}&limit=${limit}`);//await fetchCoffeeStores(latLong, 20);
+          const response = await fetch(`/api/coffeeStores?latLong=${latLong}&limit=${limit}`);
           const coffeeStores = await response.json();
           // setCoffeeStores(fetchedCoffeeStores);
           dispatch({
@@ -43,13 +53,14 @@ export default function Home(props) {
             },
           });
           setCoffeeStoresError("");
+          // set coffeeStores
         } catch (error) {
           setCoffeeStoresError(error.meesage);
         }
       }
     }
     setCoffeeStoresByLocation();
-  }, [latLong]);
+  }, [latLong, dispatch]);
 
 
   const handleOnBannerClick = () => {
@@ -92,7 +103,7 @@ export default function Home(props) {
         <div className={ styles.sectionWrapper }>
           { props.coffeeStores.length > 0 && (
             <>
-              <h2 className={ styles.heading2 }>Stores Near IBC Knowledge Park..</h2>
+              <h2 className={ styles.heading2 }>Stores Near MediBuddy..</h2>
               <div className={ styles.cardLayout }>
                 { props.coffeeStores.map(store => {
                   return (

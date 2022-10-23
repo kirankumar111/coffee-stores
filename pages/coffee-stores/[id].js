@@ -1,21 +1,24 @@
 import { useRouter } from 'next/router';
 import { useContext, useState, useEffect } from 'react';
+
 import Link from 'next/link';
 import Head from 'next/head';
 import Image from 'next/image';
+
+import useSWR from 'swr';
+
 import cls from 'classnames';
-// import coffeeStoresData from '../../data/coffee-stores.json';
 import styles from '../../styles/coffee-store.module.css';
+
 import { fetchCoffeeStores } from '../../lib/coffee-stores';
 import { StoreContext } from '../../store/store-context';
 import { fetcher, isEmpty } from '../../utils';
-import useSWR from 'swr';
 
 export async function getStaticProps(staticProps) {
     const params = staticProps.params;
     const coffeeStoresData = await fetchCoffeeStores();
     const findCoffeeStoreById = coffeeStoresData.find((coffeeStore) => {
-        return coffeeStore.id.toString() === params.id;
+        return coffeeStore.id.toString() === params.id; //dynamic id
     });
     return {
         props: {
@@ -42,6 +45,7 @@ const CoffeeStore = (initialProps) => {
     const id = router.query.id;
     const [coffeeStore, setCoffeeStore] = useState(initialProps.coffeeStore || {});
     const { state: { coffeeStores } } = useContext(StoreContext);
+
     const handleCreateCoffeeStore = async (coffeeStore) => {
         try {
             const { id, name, voting, imgUrl, neighbourhood, address } = coffeeStore;
@@ -80,9 +84,9 @@ const CoffeeStore = (initialProps) => {
             //SSG
             handleCreateCoffeeStore(initialProps.coffeeStore);
         }
-        return () => {
-            console.log('Unmounts Use effect');
-        }
+        // return () => {
+        //     console.log('Unmounts Use effect');
+        // }
     }, [initialProps.coffeeStore, coffeeStores, id]);
 
     // const { address, neighborhood, name, imgUrl } = coffeeStore;
